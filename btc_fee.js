@@ -2,31 +2,33 @@ const urlMempool = "https://mempool.space/api/v1/fees/recommended";
 const urlCoinbase = "https://api.coinbase.com/v2/prices/BTC-EUR/buy";
 // Average transaction size in bytes according to mempool.space
 const vbyte = 140;
+let usdFees = [];
+
+main();
+
+let widget = new ListWidget();
+widget.backgroundColor = Color.black();
 
 
-fees = getMempool();
-btcUsdRate = getCoinbase();
+async function main(){
+  /*fees = getMempool();
+  btcUsdRate = getCoinbase();*/
 
-/*Promise.all([getMempool(), getCoinbase()]).then(([fees, btcUsdRate]) => {
-  console.log(calculateFees(fees, btcUsdRate));
-});*/
+  Promise.all([getMempool(), getCoinbase()]).then(([fees, btcUsdRate]) => {
+    console.log(calculateFees(fees, btcUsdRate));
+    fees = calculateFees(fees, btcUsdRate);
+  
+    for (i = 0; i < 3; i++) {
+      let feeText = widget.addText(`${usdFees[i]} USD for ${["Fastest", "Hour", "Half-hour"][i]} confirmation`);
+      feeText.textColor = Color.white();
+      feeText.font = Font.systemFont(14);
+    }
+  
+    Script.setWidget(widget);
+    Script.complete();
+    widget.presentMedium();
+  });
 
-let [fees, btcUsdRate] = await Promise.all([getMempool(), getCoinbase()]);
-let usdFees = calculateFees(fees, btcUsdRate);
-let header = widget.addText("Bitcoin Fees");
-header.textColor = Color.white();
-header.font = Font.semiboldSystemFont(18);
-
-for (i = 0; i < 3; i++) {
-  let feeText = widget.addText(`${usdFees[i]} USD for ${["Fastest", "Hour", "Half-hour"][i]} confirmation`);
-  feeText.textColor = Color.white();
-  feeText.font = Font.systemFont(14);
-}
-
-if (config.runsInWidget) {
-  Script.setWidget(widget)
-} else {
-  widget.presentSmall()
 }
 
 async function getMempool() {
@@ -66,4 +68,6 @@ function calculateFees(fees, btcUsdRate) {
   }
   console.log(usdFees);
   return usdFees;
+  
 }
+
