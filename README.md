@@ -1,6 +1,8 @@
 # Bitcoin transaction fee widget
 This project is a widget for iOS that displays the current recommended Bitcoin transaction fees in USD for different confirmation times.
 
+![Bitcoin Fee](btc_fee.jpeg)
+
 ## Dependencies
 This project requires the following dependencies:
 

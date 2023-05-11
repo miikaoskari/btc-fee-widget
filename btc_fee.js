@@ -15,8 +15,6 @@ async function main(){
   Promise.all([getMempool(), getCoinbase()]).then(([fees, btcUsdRate]) => {
     feesUsd = calculateFees(fees, btcUsdRate);
 
-    
-
     //create a variable for the text sizes
     let textSize = 14;
     let titleSize = 20;
