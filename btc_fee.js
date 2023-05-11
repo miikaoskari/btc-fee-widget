@@ -15,22 +15,32 @@ async function main(){
   Promise.all([getMempool(), getCoinbase()]).then(([fees, btcUsdRate]) => {
     feesUsd = calculateFees(fees, btcUsdRate);
 
+    
+
     //create a variable for the text sizes
     let textSize = 14;
     let titleSize = 20;
 
     //create a title for the widget
     let titleStack = widget.addStack();
-    titleStack.layoutVertically();
+    titleStack.layoutHorizontally();
     titleStack.centerAlignContent();
     titleStack.setPadding(0, 0, 10, 0);
-    titleStack.spacing = 0;
+    titleStack.spacing = 5;
 
+    //set san francisco bitcoin logo next to bitcoin title
+    let logo = SFSymbol.named("bitcoinsign.circle");
+    let logoImage = titleStack.addImage(logo.image);
+    logoImage.imageSize = new Size(20, 20);
+    logoImage.tintColor = Color.white();
+
+    //set the title
     let titleText = titleStack.addText("BTC Fees");
     titleText.font = Font.boldSystemFont(titleSize);
     titleText.textColor = Color.white();
     titleText.centerAlignText();
 
+    
     //put all the fees in the widget horizontally
     let stack = widget.addStack();
     stack.layoutHorizontally();
@@ -38,24 +48,26 @@ async function main(){
     stack.setPadding(0, 0, 0, 0);
     stack.spacing = 10;
 
+
     //add the fastest fee
     let fastestFeeStack = stack.addStack();
     fastestFeeStack.layoutVertically();
     fastestFeeStack.centerAlignContent();
     fastestFeeStack.setPadding(0, 0, 0, 0);
     fastestFeeStack.spacing = 0;
-
+    // RGB 153 152 158 = #99989E
     let fastestFeeText = fastestFeeStack.addText("High Priority");
     fastestFeeText.font = Font.boldSystemFont(textSize);
     fastestFeeText.textColor = Color.white();
     fastestFeeText.centerAlignText();
 
     let fastestFeeValue = fastestFeeStack.addText("$" + feesUsd[0]);
-    fastestFeeValue.textColor = Color.white();
+    fastestFeeValue.textColor = new Color("#99989E");
 
     let fastestFeeSat = fastestFeeStack.addText(fees[0] + " sat/vB");
-    fastestFeeSat.textColor = Color.white();
+    fastestFeeSat.textColor = new Color("#99989E");
     
+
     //add the half hour fee
     let halfHourFeeStack = stack.addStack();
     halfHourFeeStack.layoutVertically();
@@ -69,10 +81,12 @@ async function main(){
     halfHourFeeText.centerAlignText();
 
     let halfHourFeeValue = halfHourFeeStack.addText("$" + feesUsd[2]);
-    halfHourFeeValue.textColor = Color.white();
+    halfHourFeeValue.textColor = new Color("#99989E");
 
     let halfHourFeeSat = halfHourFeeStack.addText(fees[2] + " sat/vB");
-    halfHourFeeSat.textColor = Color.white();
+    halfHourFeeSat.textColor = new Color("#99989E");
+
+
     //add the hour fee
     let hourFeeStack = stack.addStack();
     hourFeeStack.layoutVertically();
@@ -86,10 +100,10 @@ async function main(){
     hourFeeText.centerAlignText();
 
     let hourFeeValue = hourFeeStack.addText("$"+ feesUsd[1]);
-    hourFeeValue.textColor = Color.white();
+    hourFeeValue.textColor = new Color("#99989E");
 
     let hourFeeSat = hourFeeStack.addText(fees[1] + " sat/vB");
-    hourFeeSat.textColor = Color.white();
+    hourFeeSat.textColor = new Color("#99989E");
 
     Script.setWidget(widget);
     Script.complete();
