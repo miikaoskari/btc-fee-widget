@@ -7,23 +7,90 @@ let usdFees = [];
 main();
 
 let widget = new ListWidget();
-widget.backgroundColor = Color.black();
-
+// RBG 29 31 48 = #1D1F30
+//set widget background color to #1D1F30 with 10% opacity
+widget.backgroundColor = new Color("#1D1F30", 0.9);
 
 async function main(){
-  /*fees = getMempool();
-  btcUsdRate = getCoinbase();*/
-
   Promise.all([getMempool(), getCoinbase()]).then(([fees, btcUsdRate]) => {
-    console.log(calculateFees(fees, btcUsdRate));
-    fees = calculateFees(fees, btcUsdRate);
-  
-    for (i = 0; i < 3; i++) {
-      let feeText = widget.addText(`${usdFees[i]} USD for ${["Fastest", "Hour", "Half-hour"][i]} confirmation`);
-      feeText.textColor = Color.white();
-      feeText.font = Font.systemFont(14);
-    }
-  
+    feesUsd = calculateFees(fees, btcUsdRate);
+
+    //create a variable for the text sizes
+    let textSize = 14;
+    let titleSize = 20;
+
+    //create a title for the widget
+    let titleStack = widget.addStack();
+    titleStack.layoutVertically();
+    titleStack.centerAlignContent();
+    titleStack.setPadding(0, 0, 10, 0);
+    titleStack.spacing = 0;
+
+    let titleText = titleStack.addText("BTC Fees");
+    titleText.font = Font.boldSystemFont(titleSize);
+    titleText.textColor = Color.white();
+    titleText.centerAlignText();
+
+    //put all the fees in the widget horizontally
+    let stack = widget.addStack();
+    stack.layoutHorizontally();
+    stack.centerAlignContent();
+    stack.setPadding(0, 0, 0, 0);
+    stack.spacing = 10;
+
+    //add the fastest fee
+    let fastestFeeStack = stack.addStack();
+    fastestFeeStack.layoutVertically();
+    fastestFeeStack.centerAlignContent();
+    fastestFeeStack.setPadding(0, 0, 0, 0);
+    fastestFeeStack.spacing = 0;
+
+    let fastestFeeText = fastestFeeStack.addText("High Priority");
+    fastestFeeText.font = Font.boldSystemFont(textSize);
+    fastestFeeText.textColor = Color.white();
+    fastestFeeText.centerAlignText();
+
+    let fastestFeeValue = fastestFeeStack.addText("$" + feesUsd[0]);
+    fastestFeeValue.textColor = Color.white();
+
+    let fastestFeeSat = fastestFeeStack.addText(fees[0] + " sat/vB");
+    fastestFeeSat.textColor = Color.white();
+    
+    //add the half hour fee
+    let halfHourFeeStack = stack.addStack();
+    halfHourFeeStack.layoutVertically();
+    halfHourFeeStack.centerAlignContent();
+    halfHourFeeStack.setPadding(0, 0, 0, 0);
+    halfHourFeeStack.spacing = 0;
+
+    let halfHourFeeText = halfHourFeeStack.addText("Medium Priority");
+    halfHourFeeText.font = Font.boldSystemFont(textSize);
+    halfHourFeeText.textColor = Color.white();
+    halfHourFeeText.centerAlignText();
+
+    let halfHourFeeValue = halfHourFeeStack.addText("$" + feesUsd[2]);
+    halfHourFeeValue.textColor = Color.white();
+
+    let halfHourFeeSat = halfHourFeeStack.addText(fees[2] + " sat/vB");
+    halfHourFeeSat.textColor = Color.white();
+    //add the hour fee
+    let hourFeeStack = stack.addStack();
+    hourFeeStack.layoutVertically();
+    hourFeeStack.centerAlignContent();
+    hourFeeStack.setPadding(0, 0, 0, 0);
+    hourFeeStack.spacing = 0;
+
+    let hourFeeText = hourFeeStack.addText("Low Priority");
+    hourFeeText.font = Font.boldSystemFont(textSize);
+    hourFeeText.textColor = Color.white();
+    hourFeeText.centerAlignText();
+
+    let hourFeeValue = hourFeeStack.addText("$"+ feesUsd[1]);
+    hourFeeValue.textColor = Color.white();
+
+    let hourFeeSat = hourFeeStack.addText(fees[1] + " sat/vB");
+    hourFeeSat.textColor = Color.white();
+
     Script.setWidget(widget);
     Script.complete();
     widget.presentMedium();
@@ -34,25 +101,20 @@ async function main(){
 async function getMempool() {
   let requestMempool = new Request(urlMempool);
   let responseMempool = await requestMempool.loadJSON();
-  console.log(responseMempool);
   
   fastestFee = parseInt(responseMempool.fastestFee);
   hourFee = parseInt(responseMempool.hourFee);
   halfHourFee = parseInt(responseMempool.halfHourFee);
 
   fees = [fastestFee, hourFee, halfHourFee];
-  console.log(fees);
-
   return fees;
 }
 
 async function getCoinbase() {
   let requestCoinbase = new Request(urlCoinbase);
   let responseCoinbase = await requestCoinbase.loadJSON();
-  console.log(responseCoinbase);
 
   btcUsdRate = parseFloat(responseCoinbase.data.amount);
-  console.log(btcUsdRate);
   return btcUsdRate;
 }
 
@@ -66,8 +128,6 @@ function calculateFees(fees, btcUsdRate) {
     usd = usd.toFixed(2);
     usdFees[i] = usd;
   }
-  console.log(usdFees);
-  return usdFees;
-  
+  return usdFees;  
 }
 
