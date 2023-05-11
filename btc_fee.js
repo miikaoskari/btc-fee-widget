@@ -35,12 +35,31 @@ async function main(){
     logoImage.tintColor = Color.white();
 
     //set the title
-    let titleText = titleStack.addText("BTC Fees");
+    let titleText = titleStack.addText("Bitcoin Fees");
     titleText.font = Font.boldSystemFont(titleSize);
     titleText.textColor = Color.white();
     titleText.centerAlignText();
 
-    
+    //add a spacer to the right of the title
+    titleStack.addSpacer(50);
+
+    //get current time in format hh:mm
+    let currentTime = new Date();
+    let hours = currentTime.getHours();
+    let minutes = currentTime.getMinutes();
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+
+    }
+    let time = hours + ":" + minutes;
+
+    //add the time to the widget on the right side of title
+    let timeText = titleStack.addText("updated " + time);
+    timeText.font = Font.boldSystemFont(textSize);
+    timeText.textColor = new Color("#99989E");
+    timeText.rightAlignText();
+
+
     //put all the fees in the widget horizontally
     let stack = widget.addStack();
     stack.layoutHorizontally();
